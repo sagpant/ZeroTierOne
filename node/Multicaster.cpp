@@ -357,8 +357,11 @@ void Multicaster::send(
 			while ((count < limit)&&(idx < gs.members.size())) {
 				Address ma(gs.members[indexes[idx++]].address);
 				if (std::find(activeBridges,activeBridges + activeBridgeCount,ma) == (activeBridges + activeBridgeCount)) {
-					out.sendAndLog(RR,tPtr,ma);
-					++count;
+					SharedPtr<Peer> peer(RR->topology->getPeer(tPtr,ma));
+					if ((peer)&&(peer->isAlive(now))) {
+						out.sendAndLog(RR,tPtr,ma);
+						++count;
+					}
 				}
 			}
 		}
